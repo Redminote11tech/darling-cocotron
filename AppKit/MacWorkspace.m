@@ -89,15 +89,45 @@
         withApplication: (NSString *) application
           andDeactivate: (BOOL) deactivate
 {
-    // TODO: call LSOpenFromURLSpec()
-    NSUnimplementedMethod();
-    return NO;
+    if (path == nil) {
+        return NO;
+    }
+
+    NSURL *url = [NSURL fileURLWithPath:path];
+    NSURL *appURL = nil;
+
+    if (application != nil) {
+        appURL = [NSURL fileURLWithPath:application];
+    }
+
+    LSLaunchURLSpec spec;
+    memset(&spec, 0, sizeof(spec));
+
+    NSArray *urlArray = [NSArray arrayWithObject:url];
+    spec.itemURLs = (CFArrayRef)urlArray;
+    spec.appURL = (CFURLRef)appURL;
+    spec.launchFlags = kLSLaunchDefaults;
+
+    OSStatus status = LSOpenFromURLSpec(&spec, NULL);
+
+    return (status == noErr);
 }
 
 - (BOOL) openURL: (NSURL *) url {
-    // TODO: Call LSOpenFromURLSpec()
-    NSUnimplementedMethod();
-    return NO;
+    if (url == nil) {
+        return NO;
+    }
+
+    LSLaunchURLSpec spec;
+    memset(&spec, 0, sizeof(spec));
+
+    NSArray *urlArray = [NSArray arrayWithObject:url];
+    spec.itemURLs = (CFArrayRef)urlArray;
+    spec.launchFlags = kLSLaunchDefaults;
+
+    OSStatus status = LSOpenFromURLSpec(&spec, NULL);
+
+    return (status == noErr);
 }
 
 - (BOOL) selectFile: (NSString *) path
