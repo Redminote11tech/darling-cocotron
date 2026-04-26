@@ -89,6 +89,9 @@
         withApplication: (NSString *) application
           andDeactivate: (BOOL) deactivate
 {
+    // TODO: Implement handling `deactivate` flag
+    // TODO: Implement handling race-condition between inter-application (when target app is terminating)
+    
     if (path == nil) {
         return NO;
     }
