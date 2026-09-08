@@ -91,13 +91,16 @@
 {
     // TODO: Implement handling `deactivate` flag
     // TODO: Implement handling race-condition between inter-application (when target app is terminating)
-    
-    if (path == nil) {
-        return NO;
-    }
 
-    NSURL *url = [NSURL fileURLWithPath:path];
+    // On macOS, a nil path with a valid application simply launches the
+    // application (and returns YES), so the file URL is only added when a
+    // path was given.
+    NSURL *url = nil;
     NSURL *appURL = nil;
+
+    if (path != nil) {
+        url = [NSURL fileURLWithPath:path];
+    }
 
     if (application != nil) {
         appURL = [NSURL fileURLWithPath:application];
@@ -106,7 +109,7 @@
     LSLaunchURLSpec spec;
     memset(&spec, 0, sizeof(spec));
 
-    NSArray *urlArray = [NSArray arrayWithObject:url];
+    NSArray *urlArray = (url != nil) ? [NSArray arrayWithObject:url] : nil;
     spec.itemURLs = (CFArrayRef)urlArray;
     spec.appURL = (CFURLRef)appURL;
     spec.launchFlags = kLSLaunchDefaults;
